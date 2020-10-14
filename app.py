@@ -5,7 +5,7 @@ logger = logging.getLogger(__name__)
 
 @app.route("/", methods=['GET'])
 def default_route():
-    return "Python Flask API endpoint"
+    return "Python Flask API endpoint. There's nothing here! 😃"
 
 logger = logging.getLogger()
 handler = logging.StreamHandler()
@@ -16,7 +16,7 @@ logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
 if __name__ == "__main__":
-    logging.info("Starting application ...")
+    logging.info("Starting microservice app...")
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind(("localhost", 0))
     port = sock.getsockname()[1]

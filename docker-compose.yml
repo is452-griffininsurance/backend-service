@@ -4,7 +4,7 @@ services:
     container_name: app
     restart: unless-stopped
     build: .
-    command: "python /usr/src/app.py"
+    command: "python /usr/src/deployment/app.py"
     ports:
       - "5000:80"
     environment:

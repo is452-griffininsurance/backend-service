@@ -29,9 +29,15 @@ Next up, create the virtual environment.
 python -m venv venv
 ```
 
-Finally, you can run/activate the virtual environment and install the required packages.
+You can run/activate the virtual environment and install the required packages.
 
 ```sh
 .\venv\Scripts\activate
 pip install -r requirements.txt
+```
+
+Finally, run the services!
+
+```sh
+python app.py
 ```

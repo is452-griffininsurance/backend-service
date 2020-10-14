@@ -1,0 +1,11 @@
+version: "3"
+services:
+  app:
+    container_name: app
+    restart: unless-stopped
+    build: .
+    command: "python /usr/src/app.py"
+    ports:
+      - "5000:80"
+    environment:
+      FLASK_ENV: "production"

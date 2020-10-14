@@ -1,0 +1,7 @@
+Flask==1.0.2
+itsdangerous==0.24
+pathlib==1.0.1
+requests==2.18.4
+virtualenv==15.1.0
+virtualenv-clone==0.2.6
+Werkzeug==0.14.1

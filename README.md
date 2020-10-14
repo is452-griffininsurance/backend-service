@@ -17,21 +17,21 @@ A sample endpoint for Calculate Square is in this repo, where you can `POST` to 
 
 ## To run
 
-You will first need to have Python's `virtualenv`.
+You will first need to have Python's `virtualenv`. Below are the instructions for Windows.
 
 ```sh
-pip3 install virtualenv
+pip install virtualenv
 ```
 
 Next up, create the virtual environment.
 
 ```sh
-virtualenv venv
+python -m venv venv
 ```
 
 Finally, you can run/activate the virtual environment and install the required packages.
 
 ```sh
-source venv/bin/activate
-pip3 install -r requirements.txt
+.\venv\Scripts\activate
+pip install -r requirements.txt
 ```

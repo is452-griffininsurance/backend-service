@@ -1,12 +1,17 @@
 import logging
 import socket
 from is452 import app
-logger = logging.getLogger(__name__)
+from flask import make_response
 
+# Default route
 @app.route("/", methods=['GET'])
 def default_route():
-    return "Python Flask API endpoint. There's nothing here! 😃"
+    response = make_response("Python Flask API endpoint. There's nothing here! 😃")
+    response.mimetype = "text/plain"
+    return response
 
+# Logger
+logger = logging.getLogger(__name__)
 logger = logging.getLogger()
 handler = logging.StreamHandler()
 formatter = logging.Formatter(

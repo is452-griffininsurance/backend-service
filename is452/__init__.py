@@ -11,7 +11,7 @@ app = Flask(__name__)
 CORS(app)
 
 AUTH0_DOMAIN = "is452.us.auth0.com"
-API_AUDIENCE = ["api.is452.cloud", "https://is452.us.auth0.com/userinfo"]
+API_AUDIENCE = "https://api.is452.cloud/" # has to follow strictly to the token's audience (including https:// protocols and trailing slash /)
 ALGORITHMS = ["RS256"]
 
 # Error handler

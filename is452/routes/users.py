@@ -9,11 +9,12 @@ logger = logging.getLogger(__name__)
 @requires_auth
 def get_users_info():
     token = get_token_auth_header()
-    print(token)
     response = requests.get(
-        "https://website.com/id",
+        "https://is452.us.auth0.com/userinfo",
         headers={'Authorization': 'Bearer ' + token})
-    return response.json()
+    user_info = response.json()
+    email = user_info['email']
+    return user_info
     
 
 @app.route("/users/scoped", methods=['GET'])

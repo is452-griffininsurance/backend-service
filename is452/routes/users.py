@@ -15,7 +15,22 @@ def get_users_info():
     user_info = response.json()
     email = user_info['email']
     return user_info
-    
+
+@app.route("/users/onboarding", methods=['POST'])
+def onboarding():
+    # get bearer token first
+    # token = get_token_auth_header()
+    # response = requests.get(
+    #     "https://is452.us.auth0.com/userinfo",
+    #     headers={'Authorization': 'Bearer ' + token})
+    # user_info = response.json()
+    # email = user_info['email']
+
+    # then get data
+    data = request.get_json()
+    # post data to dynamodb
+    print(data)
+    return data
 
 @app.route("/users/scoped", methods=['GET'])
 @requires_auth

@@ -1,13 +1,18 @@
 import os
 import logging
 import requests
+
 import boto3
+from boto3.dynamodb.conditions import Key
+
 from dotenv import load_dotenv
 from flask import request, jsonify
 from is452 import app, requires_auth, requires_scope, AuthError, get_token_auth_header
 
 load_dotenv()
 logger = logging.getLogger(__name__)
+
+dynamodb = boto3.resource("dynamodb")
 
 @app.route("/users", methods=['GET'])
 @requires_auth
@@ -21,6 +26,14 @@ def get_users_info():
     logger.info("{} has attempted to retrieve user info".format(email))
 
     # combine Identity Provider's userinfo with ours (e.g. full name)
+
+    table = dynamodb.Table("users")
+    response = table.query(
+        KeyConditionExpression=Key("email").eq(email)
+    )
+    print(response['Items'][0]['full_name'])
+    user_info.update(response['Items'][0])
+    print(user_info)
     
 
     return user_info
@@ -30,8 +43,6 @@ def onboarding():
     # then get data
     data = request.get_json()
     # post data to dynamodb
-    
-    dynamodb = boto3.resource("dynamodb")
 
     table = dynamodb.Table("users")
     response = table.put_item(

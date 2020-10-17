@@ -1,8 +1,12 @@
+import os
 import logging
 import requests
+import boto3
+from dotenv import load_dotenv
 from flask import request, jsonify
 from is452 import app, requires_auth, requires_scope, AuthError, get_token_auth_header
 
+load_dotenv()
 logger = logging.getLogger(__name__)
 
 @app.route("/users", methods=['GET'])
@@ -14,23 +18,31 @@ def get_users_info():
         headers={'Authorization': 'Bearer ' + token})
     user_info = response.json()
     email = user_info['email']
+    logger.info("{} has attempted to retrieve user info".format(email))
+
+    # combine Identity Provider's userinfo with ours (e.g. full name)
+    
+
     return user_info
 
 @app.route("/users/onboarding", methods=['POST'])
 def onboarding():
-    # get bearer token first
-    # token = get_token_auth_header()
-    # response = requests.get(
-    #     "https://is452.us.auth0.com/userinfo",
-    #     headers={'Authorization': 'Bearer ' + token})
-    # user_info = response.json()
-    # email = user_info['email']
-
     # then get data
     data = request.get_json()
     # post data to dynamodb
-    print(data)
-    return data
+    
+    dynamodb = boto3.resource("dynamodb")
+
+    table = dynamodb.Table("users")
+    response = table.put_item(
+       Item={
+            'email': data['email'],
+            'full_name': data['name']
+        }
+    )
+    logger.info("{} has successfully completed the onboarding process".format(data['email']))
+    print(response)
+    return response
 
 @app.route("/users/scoped", methods=['GET'])
 @requires_auth

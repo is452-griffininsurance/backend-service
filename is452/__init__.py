@@ -57,7 +57,8 @@ def get_token_auth_header():
 
 # @requires_auth decorator
 def requires_auth(f):
-    """Determines if the Access Token is valid
+    """
+        Determines if the Access Token is valid
     """
     @wraps(f)
     def decorated(*args, **kwargs):

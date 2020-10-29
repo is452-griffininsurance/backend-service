@@ -124,3 +124,5 @@ def requires_scope(required_scope):
 # Import all your API endpoint methods here
 import is452.routes.square
 import is452.routes.users
+import is452.routes.insurance_offchain
+import is452.routes.transactions

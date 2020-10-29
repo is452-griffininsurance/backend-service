@@ -39,12 +39,14 @@ def create_insurance():
     }
     """
 
-    insurance_data['flight_date'] = datetime.strptime(insurance_data['start_date'], "%Y-%m-%d")
+    insurance_data['flight_date'] = datetime.strptime(insurance_data['flight_date'], "%Y-%m-%d")
+    insurance_data['insurers'] = []
+    insurance_data['status'] = 'open'
     response = collection.insert_one(insurance_data)
 
     return {
-        "status": "Insurance request created",
-        "request_id": str(response.inserted_id)
+        "status": "Insurance record created",
+        "insurance_id": str(response.inserted_id)
     }
 
 @app.route("/get_all_insurances", methods=['GET'])
@@ -55,12 +57,13 @@ def get_all_insurances():
 
     for i in insurances:
         i['_id'] = str(i['_id'])
+        i['flight_date'] = i['flight_date'].strftime("%Y-%m-%d")
         transformed_insurances.append(i)
 
     if insurances:
         return {
-            "status": "All insurance requests has been retrieved",
-            "insurance_requests": transformed_insurances
+            "status": "All insurances has been retrieved",
+            "insurance": transformed_insurances
         }
     return {
         "status": "No insurances in the system at the moment"
@@ -72,6 +75,7 @@ def get_insurance_by_id(id):
 
     if insurance:
         insurance["_id"] = str(insurance["_id"])
+        insurance['flight_date'] = insurance['flight_date'].strftime("%Y-%m-%d")
 
         return {
             "status": "Found request",
@@ -79,7 +83,7 @@ def get_insurance_by_id(id):
         }
     
     return {
-        "status": "Request ID does not exist in database"
+        "status": "Insurance ID does not exist in database"
     }
 
 # filter requests by user
@@ -102,13 +106,13 @@ def get_insurance_by_user(user_wallet_addr):
         'status': 'open' (type:str)
     }
     """
-
-    raw_insured_insurances = collection.find({"insured_wallet_address": user_wallet_addr})
+    raw_insured_insurances = collection.find({"insured_wallet_addr": user_wallet_addr})
     insured_insurances = []
-
+    
     if raw_insured_insurances:
         for i in raw_insured_insurances:
             i['_id'] = str(i["_id"])
+            i['flight_date'] = i['flight_date'].strftime("%Y-%m-%d")
             insured_insurances.append(i)
     
     raw_insuring_insurances = collection.find({"insurers.wallet_addr" : user_wallet_addr})
@@ -117,6 +121,7 @@ def get_insurance_by_user(user_wallet_addr):
     if raw_insuring_insurances:
         for i in raw_insuring_insurances:
             i["_id"] = str(i["_id"])
+            i['flight_date'] = i['flight_date'].strftime("%Y-%m-%d")
             insuring_insurances.append(i)
 
 
@@ -136,12 +141,12 @@ def add_insurer(contract_address):
     """
     new_insurer_data = request.get_json()
 
-    collection.findAndModify(
+    collection.find_one_and_update(
         {
             "contract_address": contract_address
         },
         {
-            "$addToSet": new_insurer_data
+            "$addToSet": {"insurers": new_insurer_data}
         }
     )
 

@@ -36,7 +36,9 @@ def get_transactions():
     transformed_transactions = []
 
     for trxn in transactions:
+        trxn['date'] = (trxn['_id'].generation_time).strftime("%Y-%m-%d")
         trxn['_id'] = str(trxn['_id'])
+        
         transformed_transactions.append(trxn)
 
     return {
@@ -51,7 +53,9 @@ def get_user_transactions(user_wallet_address):
 
     if paying_transactions:
         for trxn in paying_transactions:
+            trxn['date'] = (trxn['_id'].generation_time).strftime("%Y-%m-%d")
             trxn['_id'] = str(trxn['_id'])
+
             transformed_paying_trxns.append(trxn)
 
     receiving_transactions = collection.find({"receiving_wallet_addr": user_wallet_address})
@@ -59,7 +63,9 @@ def get_user_transactions(user_wallet_address):
 
     if receiving_transactions:
         for trxn in receiving_transactions:
+            trxn['date'] = (trxn['_id'].generation_time).strftime("%Y-%m-%d")
             trxn['_id'] = str(trxn['_id'])
+            
             transformed_receiving_trxns.append(trxn)
 
     return {

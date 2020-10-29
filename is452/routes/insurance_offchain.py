@@ -51,10 +51,16 @@ def create_insurance():
 def get_all_insurances():
     insurances = collection.find()
 
+    transformed_insurances = []
+
+    for i in insurances:
+        i['_id'] = str(i['_id'])
+        transformed_insurances.append(i)
+
     if insurances:
         return {
             "status": "All insurance requests has been retrieved",
-            "insurance_requests": insurances
+            "insurance_requests": transformed_insurances
         }
     return {
         "status": "No insurances in the system at the moment"

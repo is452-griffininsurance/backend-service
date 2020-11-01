@@ -46,8 +46,9 @@ def get_transactions():
     }
 
 
-@app.route("/get_user_transactions/<string:user_wallet_address>", methods=["GET"])
-def get_user_transactions(user_wallet_address):
+@app.route("/get_user_transactions", methods=["GET"])
+def get_user_transactions():
+    user_wallet_address = request.args.get("user_wallet_address", None)
     paying_transactions = collection.find({"sending_wallet_addr": user_wallet_address})
     transformed_paying_trxns = []
 

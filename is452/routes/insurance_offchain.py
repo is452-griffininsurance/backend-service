@@ -10,6 +10,11 @@ import json
 client = MongoClient("mongodb+srv://is452_admin:mianbaochaoren@is452-project.n0htb.mongodb.net/insurance?retryWrites=true&w=majority")
 collection = client.insurance.insurances
 
+date_elements = {
+    "flight_delay": "flight_date",
+    "car": "expiry_date"
+}
+
 @app.route("/create_insurance", methods=['POST'])
 def create_insurance():
     """
@@ -23,6 +28,7 @@ def create_insurance():
         'insured_wallet_addr': 'xxxx' (type: str)
     }
     """
+    insurance_type = request.args.get("insurance_type", None)
     insurance_data = request.get_json()
 
     """
@@ -38,10 +44,14 @@ def create_insurance():
         'status': 'open' (type:str)
     }
     """
+    if insurance_type == "flight_delay":
+        insurance_data['flight_date'] = datetime.strptime(insurance_data['flight_date'], "%Y-%m-%d")
+    else:
+        insurance_data['expiry_date'] = datetime.strptime(insurance_data['flight_date'], "%Y-%m-%d")
 
-    insurance_data['flight_date'] = datetime.strptime(insurance_data['flight_date'], "%Y-%m-%d")
     insurance_data['insurers'] = []
     insurance_data['status'] = 'open'
+    insurance_data['insurance_type'] = insurance_type
     response = collection.insert_one(insurance_data)
 
     return {
@@ -51,35 +61,59 @@ def create_insurance():
 
 @app.route("/get_all_insurances", methods=['GET'])
 def get_all_insurances():
-    insurances = collection.find()
+    insurance_type = request.args.get("insurance_type", None)
+    status = request.args.get("status", None)
+    insurances = collection.find({"$and": [{"insurance_type": insurance_type}, {"status": status}]})
+    date_element = date_elements[insurance_type]
 
     transformed_insurances = []
 
     for i in insurances:
         i['_id'] = str(i['_id'])
-        i['flight_date'] = i['flight_date'].strftime("%Y-%m-%d")
+        i[date_element] = i[date_element].strftime("%Y-%m-%d")
+        cum_insured_amt = 0
+        if i["insurers"]:
+            for insurer in i["insurers"]:
+                cum_insured_amt += insurer['insuring_amount']
+        
+        if cum_insured_amt > 0:
+            i['percent_insured'] = cum_insured_amt/i['max_insured_amount']
+        else:
+            i['percent_insured'] = cum_insured_amt
+        
         transformed_insurances.append(i)
 
     if insurances:
         return {
             "status": "All insurances has been retrieved",
-            "insurance": transformed_insurances
+            "insurances": transformed_insurances
         }
     return {
         "status": "No insurances in the system at the moment"
     }
 
-@app.route("/get_insurance_by_id/<string:id>", methods=['GET'])
-def get_insurance_by_id(id):
-    insurance = collection.find_one({"_id": ObjectId(id)})
-
+@app.route("/get_insurance_by_id", methods=['GET'])
+def get_insurance_by_id():
+    insurance_id = request.args.get("insurance_id", None)
+    insurance = collection.find_one({"_id": ObjectId(insurance_id)})
+    date_element = date_elements[insurance['insurance_type']]
     if insurance:
         insurance["_id"] = str(insurance["_id"])
-        insurance['flight_date'] = insurance['flight_date'].strftime("%Y-%m-%d")
+        insurance[date_element] = insurance[date_element].strftime("%Y-%m-%d")
+
+        cum_insured_amt = 0
+        if insurance["insurers"]:
+            for insurer in insurance["insurers"]:
+                cum_insured_amt += insurer['insuring_amount']
+        
+        if cum_insured_amt > 0:
+            insurance['percent_insured'] = cum_insured_amt/insurance['max_insured_amount']
+        else:
+            insurance['percent_insured'] = cum_insured_amt
 
         return {
             "status": "Found request",
-            "request_record": insurance
+            "insurance": insurance
         }
     
     return {
@@ -87,8 +121,8 @@ def get_insurance_by_id(id):
     }
 
 # filter requests by user
-@app.route("/get_insurance_by_user/<string:user_wallet_addr>", methods=['GET'])
-def get_insurance_by_user(user_wallet_addr):
+@app.route("/get_insurance_by_user", methods=['GET'])
+def get_insurance_by_user():
     """
     Structure of document to be stored
     {
@@ -106,6 +140,7 @@ def get_insurance_by_user(user_wallet_addr):
         'status': 'open' (type:str)
     }
     """
+    user_wallet_addr = request.args.get("user_wallet_addr", None)
     raw_insured_insurances = collection.find({"insured_wallet_addr": user_wallet_addr})
     insured_insurances = []
     
@@ -113,6 +148,16 @@ def get_insurance_by_user(user_wallet_addr):
         for i in raw_insured_insurances:
             i['_id'] = str(i["_id"])
             i['flight_date'] = i['flight_date'].strftime("%Y-%m-%d")
+            cum_insured_amt = 0
+            if i["insurers"]:
+                for insurer in i["insurers"]:
+                    cum_insured_amt += insurer['insuring_amount']
+            
+            if cum_insured_amt > 0:
+                i['percent_insured'] = cum_insured_amt/i['max_insured_amount']
+            else:
+                i['percent_insured'] = cum_insured_amt
+
             insured_insurances.append(i)
     
     raw_insuring_insurances = collection.find({"insurers.wallet_addr" : user_wallet_addr})
@@ -122,6 +167,16 @@ def get_insurance_by_user(user_wallet_addr):
         for i in raw_insuring_insurances:
             i["_id"] = str(i["_id"])
             i['flight_date'] = i['flight_date'].strftime("%Y-%m-%d")
+            cum_insured_amt = 0
+            if i["insurers"]:
+                for insurer in i["insurers"]:
+                    cum_insured_amt += insurer['insuring_amount']
+            
+            if cum_insured_amt > 0:
+                i['percent_insured'] = cum_insured_amt/i['max_insured_amount']
+            else:
+                i['percent_insured'] = cum_insured_amt
+
             insuring_insurances.append(i)
 
 
@@ -130,8 +185,8 @@ def get_insurance_by_user(user_wallet_addr):
         "insuring_insurances": insuring_insurances
     }
 
-@app.route("/add_insurer/<string:contract_address>", methods=["POST"])
-def add_insurer(contract_address):
+@app.route("/add_insurer", methods=["POST"])
+def add_insurer():
     """
     Structure of incoming data:
     {
@@ -139,6 +194,7 @@ def add_insurer(contract_address):
         "insuring_amount": 123.56 (type: float)
     }
     """
+    contract_address = request.args.get("contract_address", None)
     new_insurer_data = request.get_json()
 
     collection.find_one_and_update(
@@ -153,42 +209,3 @@ def add_insurer(contract_address):
     return {
         "status": f"New insurer ({new_insurer_data['wallet_addr']}) has been added to insurance ({contract_address})"
     }
-
-# @app.route("/update_insurance/<string:id>", methods=['POST'])
-# def update_insurance(id):
-#     update_data = request.get_json()
-
-#     # check if request_id is valid
-#     insurance = collection.find_one({"_id": ObjectId(id)})
-
-#     if insurance:
-#         collection.update_one(
-#             {
-#                 "_id": ObjectId(id)
-#             },
-#             {
-#                 "$set": update_data
-#             }
-#         )
-#         return {
-#             "status": f"Insurance ({id}) has been updated with the new details"
-#         }
-
-#     return {
-#         "status": "Update request failed"
-#     }
-
-# @app.route("/delete_insurance_request/<string:request_id>", methods=['POST'])
-# def delete_insurance_request(request_id):
-#     # check if request_id is valid
-#     insurance_request = collection.find_one({"_id": ObjectId(request_id)})
-
-#     if insurance_request:
-#         collection.delete_one({"_id": ObjectId(request_id)})
-
-#         return {
-#             "status": f"Successfully deleted insurance request ({request_id})"
-#         }
-#     return {
-#         "status": f"Failed to delete insurance request ({request_id})"
-#     }

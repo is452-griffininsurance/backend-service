@@ -16,8 +16,8 @@ For Flight Delay Insurance
     "coverage_amount": 1234.56,
     "premium_amount": 1234.56,
     "insured_wallet_addr": "0xkwkwi120",
-    "min_insure_amount": 1234.56,
-    "max_insure_amount": 1234.56
+    "min_insured_amount": 1234.56,
+    "max_insured_amount": 1234.56
 }
 ```
 <br>
@@ -31,8 +31,8 @@ For Car Insurance
     "coverage_amount": 1234.56,
     "premium_amount": 1234.56,
     "insured_wallet_addr": "0xkwkwi120",
-    "min_insure_amount": 1234.56,
-    "max_insure_amount": 1234.56
+    "min_insured_amount": 1234.56,
+    "max_insured_amount": 1234.56
 }
 ```
    - **Output JSON**
@@ -111,8 +111,8 @@ No input required
         "insurance_type": "flight_delay",
         "insured_wallet_addr": "0xkwkwi120",
         "insurers": [],
-        "max_insure_amount": 1234.56,
-        "min_insure_amount": 1234.56,
+        "max_insured_amount": 1234.56,
+        "min_insured_amount": 1234.56,
         "percent_insured": 0,
         "premium_amount": 1234.56,
         "status": "open"

@@ -74,10 +74,10 @@ def get_all_insurances():
         cum_insured_amt = 0
         if i["insurers"]:
             for insurer in i["insurers"]:
-                cum_insured_amt += insurer['insuring_amount']
+                cum_insured_amt += float(insurer['insuring_amount'])
         
         if cum_insured_amt > 0:
-            i['percent_insured'] = cum_insured_amt/i['max_insured_amount']
+            i['percent_insured'] = cum_insured_amt/float(i['max_insured_amount'])
         else:
             i['percent_insured'] = cum_insured_amt
         

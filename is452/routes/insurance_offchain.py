@@ -206,6 +206,16 @@ def add_insurer():
         }
     )
 
+    transaction_data = {
+        "sending_wallet_addr": new_insurer_data['wallet_addr'],
+        "receiving_wallet_addr": contract_address,
+        "transfer_amount": new_insurer_data['insuring_amount']
+    }
+    transaction_collection = client.insurance.transactions
+
+    response = transaction_collection.insert_one(transaction_data)
+
+
     return {
         "status": f"New insurer ({new_insurer_data['wallet_addr']}) has been added to insurance ({contract_address})"
     }

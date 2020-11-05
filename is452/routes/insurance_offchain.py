@@ -104,10 +104,10 @@ def get_insurance_by_id():
         cum_insured_amt = 0
         if insurance["insurers"]:
             for insurer in insurance["insurers"]:
-                cum_insured_amt += insurer['insuring_amount']
+                cum_insured_amt += float(insurer['insuring_amount'])
         
         if cum_insured_amt > 0:
-            insurance['percent_insured'] = cum_insured_amt/insurance['max_insured_amount']
+            insurance['percent_insured'] = cum_insured_amt/float(insurance['max_insured_amount'])
         else:
             insurance['percent_insured'] = cum_insured_amt
 
@@ -141,44 +141,48 @@ def get_insurance_by_user():
     }
     """
     user_wallet_addr = request.args.get("user_wallet_addr", None)
+    # print(user_wallet_addr)
     raw_insured_insurances = collection.find({"insured_wallet_addr": user_wallet_addr})
     insured_insurances = []
-    
+   
+    # print("insured insurances")
     if raw_insured_insurances:
         for i in raw_insured_insurances:
+            # print(i)
             i['_id'] = str(i["_id"])
             i['flight_date'] = i['flight_date'].strftime("%Y-%m-%d")
             cum_insured_amt = 0
             if i["insurers"]:
                 for insurer in i["insurers"]:
-                    cum_insured_amt += insurer['insuring_amount']
+                    cum_insured_amt += float(insurer['insuring_amount'])
             
             if cum_insured_amt > 0:
-                i['percent_insured'] = cum_insured_amt/i['max_insured_amount']
+                i['percent_insured'] = cum_insured_amt/float(i['max_insured_amount'])
             else:
                 i['percent_insured'] = cum_insured_amt
 
             insured_insurances.append(i)
-    
+    # print(insured_insurances)
     raw_insuring_insurances = collection.find({"insurers.wallet_addr" : user_wallet_addr})
     insuring_insurances = []
 
     if raw_insuring_insurances:
         for i in raw_insuring_insurances:
+            # print(i)
             i["_id"] = str(i["_id"])
             i['flight_date'] = i['flight_date'].strftime("%Y-%m-%d")
             cum_insured_amt = 0
             if i["insurers"]:
                 for insurer in i["insurers"]:
-                    cum_insured_amt += insurer['insuring_amount']
+                    cum_insured_amt += float(insurer['insuring_amount'])
             
             if cum_insured_amt > 0:
-                i['percent_insured'] = cum_insured_amt/i['max_insured_amount']
+                i['percent_insured'] = cum_insured_amt/float(i['max_insured_amount'])
             else:
                 i['percent_insured'] = cum_insured_amt
 
             insuring_insurances.append(i)
-
+    # print(insuring_insurances)
 
     return {
         "insured_insurances": insured_insurances,

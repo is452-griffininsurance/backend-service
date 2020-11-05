@@ -77,9 +77,9 @@ def get_all_insurances():
                 cum_insured_amt += float(insurer['insuring_amount'])
         
         if cum_insured_amt > 0:
-            i['percent_insured'] = cum_insured_amt/float(i['max_insured_amount'])
+            i['percent_insured'] = round(cum_insured_amt/float(i['max_insured_amount']), 2)
         else:
-            i['percent_insured'] = cum_insured_amt
+            i['percent_insured'] = round(cum_insured_amt, 2)
         
         transformed_insurances.append(i)
 
@@ -107,9 +107,9 @@ def get_insurance_by_id():
                 cum_insured_amt += float(insurer['insuring_amount'])
         
         if cum_insured_amt > 0:
-            insurance['percent_insured'] = cum_insured_amt/float(insurance['max_insured_amount'])
+            insurance['percent_insured'] = round(cum_insured_amt/float(insurance['max_insured_amount']), 2)
         else:
-            insurance['percent_insured'] = cum_insured_amt
+            insurance['percent_insured'] = round(cum_insured_amt, 2)
 
         return {
             "status": "Found request",
@@ -157,9 +157,9 @@ def get_insurance_by_user():
                     cum_insured_amt += float(insurer['insuring_amount'])
             
             if cum_insured_amt > 0:
-                i['percent_insured'] = cum_insured_amt/float(i['max_insured_amount'])
+                i['percent_insured'] = round(cum_insured_amt/float(i['max_insured_amount']), 2)
             else:
-                i['percent_insured'] = cum_insured_amt
+                i['percent_insured'] = round(cum_insured_amt, 2)
 
             insured_insurances.append(i)
     # print(insured_insurances)
@@ -177,9 +177,9 @@ def get_insurance_by_user():
                     cum_insured_amt += float(insurer['insuring_amount'])
             
             if cum_insured_amt > 0:
-                i['percent_insured'] = cum_insured_amt/float(i['max_insured_amount'])
+                i['percent_insured'] = round(cum_insured_amt/float(i['max_insured_amount']), 2)
             else:
-                i['percent_insured'] = cum_insured_amt
+                i['percent_insured'] = round(cum_insured_amt, 2)
 
             insuring_insurances.append(i)
     # print(insuring_insurances)

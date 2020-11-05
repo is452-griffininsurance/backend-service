@@ -3,11 +3,12 @@
 ## Insurance Offchain API
 ### Available Endpoints
 1. **POST** `/create_insurance?insurance_type=xxx`
-<br>
-*insurance_type = `flight_delay` / `car`*
+
+#### *insurance_type = `flight_delay` / `car`*
+
 - **Input JSON**
-<br>
-For Flight Delay Insurance
+  
+#### For Flight Delay Insurance
 ```
 {
     "contract_address": "0xasdaw1231232",
@@ -20,9 +21,8 @@ For Flight Delay Insurance
     "max_insured_amount": 1234.56
 }
 ```
-<br>
 
-For Car Insurance
+#### For Car Insurance
 ```
 {
     "contract_address": "0xasdaw1231232",
@@ -43,7 +43,7 @@ For Car Insurance
 }
 ```
 
-2. **GET** `/get_all_insurances?insurance_type=xxx&status=open`
+1. **GET** `/get_all_insurances?insurance_type=xxx&status=open`
 <br>
 *insurance_type = `flight_delay` / `car`*
 

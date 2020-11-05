@@ -47,11 +47,12 @@ python app.py
 ## Insurance Offchain API
 ### Available Endpoints
 1. **POST** `/create_insurance?insurance_type=xxx`
-<br>
-*insurance_type = `flight_delay` / `car`*
+
+#### *insurance_type = `flight_delay` / `car`*
+
 - **Input JSON**
-<br>
-For Flight Delay Insurance
+  
+#### For Flight Delay Insurance
 ```
 {
     "contract_address": "0xasdaw1231232",
@@ -60,13 +61,12 @@ For Flight Delay Insurance
     "coverage_amount": 1234.56,
     "premium_amount": 1234.56,
     "insured_wallet_addr": "0xkwkwi120",
-    "min_insure_amount": 1234.56,
-    "max_insure_amount": 1234.56
+    "min_insured_amount": 1234.56,
+    "max_insured_amount": 1234.56
 }
 ```
-<br>
 
-For Car Insurance
+#### For Car Insurance
 ```
 {
     "contract_address": "0xasdaw1231232",
@@ -75,8 +75,8 @@ For Car Insurance
     "coverage_amount": 1234.56,
     "premium_amount": 1234.56,
     "insured_wallet_addr": "0xkwkwi120",
-    "min_insure_amount": 1234.56,
-    "max_insure_amount": 1234.56
+    "min_insured_amount": 1234.56,
+    "max_insured_amount": 1234.56
 }
 ```
    - **Output JSON**
@@ -87,7 +87,7 @@ For Car Insurance
 }
 ```
 
-2. **GET** `/get_all_insurances?insurance_type=xxx&status=open`
+1. **GET** `/get_all_insurances?insurance_type=xxx&status=open`
 <br>
 *insurance_type = `flight_delay` / `car`*
 
@@ -155,8 +155,8 @@ No input required
         "insurance_type": "flight_delay",
         "insured_wallet_addr": "0xkwkwi120",
         "insurers": [],
-        "max_insure_amount": 1234.56,
-        "min_insure_amount": 1234.56,
+        "max_insured_amount": 1234.56,
+        "min_insured_amount": 1234.56,
         "percent_insured": 0,
         "premium_amount": 1234.56,
         "status": "open"

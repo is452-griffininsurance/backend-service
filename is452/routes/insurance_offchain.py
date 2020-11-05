@@ -141,11 +141,14 @@ def get_insurance_by_user():
     }
     """
     user_wallet_addr = request.args.get("user_wallet_addr", None)
+    # print(user_wallet_addr)
     raw_insured_insurances = collection.find({"insured_wallet_addr": user_wallet_addr})
     insured_insurances = []
-    
+   
+    # print("insured insurances")
     if raw_insured_insurances:
         for i in raw_insured_insurances:
+            # print(i)
             i['_id'] = str(i["_id"])
             i['flight_date'] = i['flight_date'].strftime("%Y-%m-%d")
             cum_insured_amt = 0
@@ -159,12 +162,13 @@ def get_insurance_by_user():
                 i['percent_insured'] = round(cum_insured_amt, 2)
 
             insured_insurances.append(i)
-    
+    # print(insured_insurances)
     raw_insuring_insurances = collection.find({"insurers.wallet_addr" : user_wallet_addr})
     insuring_insurances = []
 
     if raw_insuring_insurances:
         for i in raw_insuring_insurances:
+            # print(i)
             i["_id"] = str(i["_id"])
             i['flight_date'] = i['flight_date'].strftime("%Y-%m-%d")
             cum_insured_amt = 0
@@ -178,7 +182,7 @@ def get_insurance_by_user():
                 i['percent_insured'] = round(cum_insured_amt, 2)
 
             insuring_insurances.append(i)
-
+    # print(insuring_insurances)
 
     return {
         "insured_insurances": insured_insurances,
